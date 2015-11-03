@@ -5,7 +5,7 @@
 ## $Id:$
 
 
-COURSE_INCLUDE_DIR = ../include
+COURSE_INCLUDE_DIR = ../../include
 CUDAPATH = /usr/local/cuda
 
 
