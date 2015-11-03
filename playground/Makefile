@@ -35,11 +35,7 @@ LIBDIR  =
 
 default: all
 #default: demo-11-a-comp-shader
-all:demo-1c-coord demo-2-springs demo-1-simple demo-3-balls demo-4-simple-ogl \
-	demo-5-more-ogl demo-6-lighting demo-7-vtx-arrays demo-8-texture \
-	demo-9-shader demo-1d-objects demo-10-shader demo-11-a-comp-shader \
-	demo-cuda-01-simple demo-cuda-02-basics demo-cuda-03-shared-mem \
-        demo-cuda-04-acc-pat
+all:playground
 
 INCLUDES_BASE = util.h glextfuncs.h coord.h shader.h pstring.h misc.h \
 	        gl-buffer.h texture-util.h cuda-util.h
@@ -63,7 +59,7 @@ CUFLAGS = -g -O3 -Xcompiler -Wall -Xcompiler -Wno-unused-function \
 	$(CUDUMP) -sass $*.cubin > $*.sass
 
 playground.o:  $(INCLUDES) playground-graphics.cc
-playground: playground.o 
+playground: playground.o
 	$(CXX) $(LINKFLAGS) -o $@ $(LIBDIR) $^ $(LIBRARIES)
 
 clean:
