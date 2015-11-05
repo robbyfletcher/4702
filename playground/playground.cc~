@@ -209,7 +209,7 @@ void Ball::translate(pVect amt) { position += amt; }
 
 // Add velocity to the ball.
 //
-void Ball::push(pVect amt) { velocity = amt; }
+void Ball::push(pVect amt) { velocity += amt; }
 
 // Set the velocity to zero.
 //
