@@ -1,7 +1,7 @@
 /// LSU EE 4702-X/7722 GPU Programming / Microarch
 //
  /// Demo of Dynamic Simulation, Multiple Balls on Curved Platform
-y
+
 /// Purpose
 //
 //   Demonstrate Several Graphical and Simulation Techniques.
@@ -467,7 +467,7 @@ public:
   float opt_elasticity;
   float opt_friction_coeff;
   float opt_friction_roll;
-  int opt_time_step_factor;
+  int opt_timstep_factor;
 
   // Pre-computed values.
   //
@@ -697,7 +697,7 @@ World::init()
   data_location = DL_ALL_CPU;
   cuda_initialized = false;
   cuda_schedule_stale = 1;
-  opt_physics_method = GP_cuda;
+  opt_physics_method = GP_cpu;  //GP_cuda;
   opt_block_size = 128;
 
   frame_timer.work_unit_set("Steps / s");
@@ -743,16 +743,16 @@ World::init()
   //
   vs_fixed = new pShader();
 
-  eye_location = pCoor(17.9,-2,117.2);
-  eye_direction = pVect(-0.15,-0.06,-0.96);
+  eye_location = pCoor(0,100,0);  //pCoor(17.9,-2,117.2);
+  eye_direction = pCoor(0,-1,0);    //pVect(-0.15,-0.06,-0.96);
 
-  platform_xmin = -40; platform_xmax = 40;
-  platform_zmin = -80; platform_zmax = 80;
+  platform_xmin = -20; platform_xmax = 20;
+  platform_zmin = -20; platform_zmax = 20;
 
   // Platform and Ball Textures
   //
-  texid_plat = pBuild_Texture_File("gpup.png", false, 255);
-  texid_ball = pBuild_Texture_File("mult.png", false, -1);
+  //texid_plat = pBuild_Texture_File("gpup.png", false, 255);
+  //texid_ball = pBuild_Texture_File("mult.png", false, -1);
 
   // Limits of texture coordinates for platform tiles.
   //
@@ -761,8 +761,8 @@ World::init()
   tsmax = 0;
   tsmin = 0.4;
 
-  opt_light_intensity = 100.2;
-  light_location = pCoor(0,25.8,-14.3);
+  opt_light_intensity = 1000;
+  light_location = pCoor(0,100,0);
 
   opt_ball_radius = 2;
   opt_ball_density = 0.0074603942589580438;
@@ -825,7 +825,7 @@ World::init()
     }
 
 
-  wheel = new Wheel(this);
+  //wheel = new Wheel(this);
 
   variables_update();
   platform_update();
@@ -834,7 +834,7 @@ World::init()
   if ( wheel )
     wheel->init(pCoor(0.6 * platform_xrad,-10,65), pVect(0,0,-10),3,8);
 
-  {
+  /*{
     //  Use tiles to construct a staircase.
     //
     const int step_count = 10;
@@ -854,7 +854,7 @@ World::init()
       }
 
     variables_update();
-  }
+    }*/
 
   /// Initialize Ball Positions
   //
@@ -2245,15 +2245,15 @@ World::time_step_cpu()
       // the platform. This pball will be used for the ball-ball penetration
       // routine, penetration_balls_resolve.
 
-      if ( pos.y <= -40 )
+      if ( pos.y <= -40 + ball->radius)
       {
           // Possible contact with upper edge of platform.
           //
-          pCoor tact(pos.x, -40, pos.z); //pos.x > platform_xmid ? platform_xmax : platform_xmin
+          pCoor tact(pos.x, -40 - pball->radius, pos.z); //pos.x > platform_xmid ? platform_xmax : platform_xmin
           //pNorm tact_dir(0,-1,0);
 	  pNorm tact_dir(pos,tact);
-          if ( tact_dir.mag_sq >= ball->radius_sq ) continue;
-          pball->position = tact + pball->radius * -tact_dir;
+          //if ( tact_dir.mag_sq >= ball->radius_sq ) continue;
+          pball->position = tact;
 	  
       }
       /*else if ( pos.z > platform_zmax || pos.z < platform_zmin )
@@ -3612,18 +3612,18 @@ World::render_objects(bool attempt_ot)
 
   // Write lighter-colored, textured tiles.
   //
-  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
-  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,2.0);
-  glColor3f(0.35,0.35,0.35);
-  glDrawArrays(GL_QUADS,0,platform_even_vtx_cnt);
+  //glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,color_white);
+  //glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,2.0);
+  glColor3fv(mirror_tint);
+  glDrawArrays(GL_QUADS,0,platform_even_vtx_cnt);//glDrawArrays(GL_QUADS,0,platform_even_vtx_cnt);
 
   // Write darker-colored, untextured, mirror tiles.
   //
-  glEnable(GL_BLEND);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,color_white);
-  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,20);
-  glDisable(GL_TEXTURE_2D);
-  glColor3fv(mirror_tint);
+  //glEnable(GL_BLEND);
+  //glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,color_white);
+  //glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,2.0);
+  //glDisable(GL_TEXTURE_2D);
+  glColor3fv(mirror_tint); //mirror_tint
   glDrawArrays(GL_QUADS,platform_even_vtx_cnt,platform_odd_vtx_cnt);
 
   glDisableClientState(GL_VERTEX_ARRAY);
