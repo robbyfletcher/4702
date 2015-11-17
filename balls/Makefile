@@ -29,7 +29,7 @@ LIBRARIES =  -lX11 -lglut -lGL -lGLU -lm -lpthread  -lrt \
   $(shell Magick++-config --ldflags --libs)
 
 
-default: balls
+default: BumperBalls
 
 .cc.o:
 	$(CXX) $(CXXFLAGS) -c $*.cc
@@ -37,11 +37,9 @@ default: balls
 .cu.o:
 	$(CXX) $(CFLAGS) -c $*.cu
 
-# balls.o: demo-x-kernel.cu demo-x.cuh
-balls-kernel.o: Makefile balls.cuh balls-kernel.cu
+BumperBalls-kernel.o: Makefile BumperBalls.cuh BumperBalls-kernel.cu
 
-
-balls: balls.cc shapes.h tiles.h Makefile balls.cuh balls-kernel.o
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $@.cc balls-kernel.o -o $@ $(LIBRARIES)
-	$(CXX) $(CXXFLAGS) $@.cc -o $@-debug balls-kernel.o $(LIBRARIES)
+BumperBalls: BumperBalls.cc shapes.h tiles.h Makefile BumperBalls.cuh BumperBalls-kernel.o
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $@.cc BumperBalls-kernel.o -o $@ $(LIBRARIES)
+	$(CXX) $(CXXFLAGS) $@.cc -o $@-debug BumperBalls-kernel.o $(LIBRARIES)
 
