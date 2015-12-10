@@ -971,9 +971,11 @@ World::platform_update()
   /// Set up Platform
 
   const float platform_delta_z = platform_zmax - platform_zmin;
+  const float platform_delta_x = platform_xmax - platform_xmin;
   const int tile_count = int(max(1.0,platform_delta_z * 0.15));
   const float zdelta = platform_delta_z / tile_count;
-  const float platform_delta_x = platform_xmax - platform_xmin;
+  const float xdelta = platform_delta_x / tile_count;
+  
 
   PStack<pVect> p_tile_coords;
   PStack<pVect> p1_tile_coords;
@@ -998,10 +1000,10 @@ World::platform_update()
       const double theta0 = i * delta_theta;
       const double theta1 = theta0 + delta_theta;
       bool even = i & tess_mask;
-      const float x0 = platform_xmid - platform_xrad * cos(theta0);
-      const float x1 = platform_xmid - platform_xrad * cos(theta1);
-      const float y0 = -40; //-0.01 - platform_xrad * sin(theta0); project
-      const float y1 = -40; //-0.01 - platform_xrad * sin(theta1);
+      const float x0 = platform_xmid - xdelta*i;//platform_xmid - platform_xrad * cos(theta0);
+      const float x1 = platform_xmid - xdelta*i;//platform_xmid - platform_xrad * cos(theta1);
+      const float y0 = platformHeight; //-0.01 - platform_xrad * sin(theta0); 
+      const float y1 = platformHeight; //-0.01 - platform_xrad * sin(theta1);
       pVect norm0( cos(theta0), sin(theta0), 0);
       pVect norm1( cos(theta1), sin(theta1), 0);
 
@@ -2281,8 +2283,8 @@ World::time_step_cpu()
 
       if ( pos.y <= -40 + ball->radius)
       {
-          // Possible contact with upper edge of platform.
-          //
+          // Possible contact with the platform
+
           pCoor tact(pos.x, -40 - pball->radius, pos.z); //pos.x > platform_xmid ? platform_xmax : platform_xmin
           //pNorm tact_dir(0,-1,0);
 	  pNorm tact_dir(pos,tact);
@@ -3819,7 +3821,7 @@ World::render()
 
   ogl_helper.fbprintf("%s\n",frame_timer.frame_rate_text_get());
 
-  if ( 0 )
+  /*if ( 0 )
   ogl_helper.fbprintf
     ("Eye location: [%5.1f, %5.1f, %5.1f]  "
      "Eye direction: [%+.2f, %+.2f, %+.2f]\n",
@@ -3908,7 +3910,7 @@ World::render()
                       double(prox_test_per_ball_prev) / physs.occ(),
                       prox_test_per_ball_prev,
                       cuda_prox_full_prev);
-
+*/
   // Sort balls by distance from user's eye.
   // This is needed for the occlusion test.
   //
@@ -4223,11 +4225,11 @@ World::cb_keyboard()
     }*/
 }
 
-void 
+/*void 
 keyPressed(unsigned char Key, int x, int y){
   keyStates[Key] = true;
   printf("Key pressed: %c \n",Key);
-}
+}*/
 
 void
 keyUp(unsigned char Key, int x, int y){
