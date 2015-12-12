@@ -778,8 +778,8 @@ World::init()
   tsmax = 0;
   tsmin = 0.4;
 
-  opt_light_intensity = 1000;
-  light_location = pCoor(0,100,0);
+  opt_light_intensity = 500;
+  light_location = pCoor(0,100,25);
 
   opt_ball_radius = 2;
   opt_ball_density = 0.0074603942589580438;
