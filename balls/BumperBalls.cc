@@ -712,7 +712,7 @@ World::init()
 
   frame_timer.work_unit_set("Steps / s");
   world_time = 0;
-  opt_gravity_accel = 9.8;
+  opt_gravity_accel = 100;
   opt_gravity = true;
   gravity_accel = pVect(0,-opt_gravity_accel,0);
   opt_normals_visible = false;
@@ -753,12 +753,12 @@ World::init()
   //
   vs_fixed = new pShader();
 
-  eye_location = pCoor(0,100,0);  //pCoor(17.9,-2,117.2);
-  eye_direction = pCoor(0,-1,0);    //pVect(-0.15,-0.06,-0.96);
+  eye_location = pCoor(0,100,100);  //pCoor(17.9,-2,117.2);
+  eye_direction = pCoor(0,0,0)+pVect(0,-100,-100);    //pVect(-0.15,-0.06,-0.96);
 
   platformHeight = -40;
-  platform_xmin = -20; platform_xmax = 20;
-  platform_zmin = -20; platform_zmax = 20;
+  platform_xmin = -40; platform_xmax = 40;
+  platform_zmin = -40; platform_zmax = 40;
 
   for(int i=0; i<1000; i++) keyStates[i] = false;
   //glutKeyboardFunc(keyPressed);
@@ -2202,11 +2202,19 @@ World::time_step_cpu()
 	player1->position = pCoor(platform_xmax*.75,platformHeight+player1->radius,platform_zmax*.75);
 	player1->velocity = pVect(0,0,0);
 	player1->omega = pVect(0,0,0);
+	keyStates['w'] = false;
+	keyStates['a'] = false;
+	keyStates['s'] = false;
+	keyStates['d'] = false;
   }
   if(player2->position.y < deep){
 	player2->position = pCoor(platform_xmin*.75,platformHeight+player2->radius,platform_zmin*.75);
 	player2->velocity = pVect(0,0,0);
 	player2->omega = pVect(0,0,0);
+	keyStates[FB_KEY_UP] = false;
+ 	keyStates[FB_KEY_DOWN] = false;
+  	keyStates[FB_KEY_LEFT] = false;
+  	keyStates[FB_KEY_RIGHT] = false;
   }
   /*for ( Ball *ball; balls_iterate(ball); )
     if ( ball->position.y < deep ) { physs.iterate_yank(); delete ball; }
@@ -3823,7 +3831,7 @@ World::render()
 
   /*if ( 0 )
   ogl_helper.fbprintf
-    ("Eye location: [%5.1f, %5.1f, %5.1f]  "
+    ("Eye location: [%5.1f, %5.aaaa1f, %5.1f]  "
      "Eye direction: [%+.2f, %+.2f, %+.2f]\n",
      eye_location.x, eye_location.y, eye_location.z,
      eye_direction.x, eye_direction.y, eye_direction.z);
