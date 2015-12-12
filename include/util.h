@@ -461,7 +461,7 @@ public:
     animation_frame_rate = 60;
     animation_record = false;
     user_text_reprint_called = false;
-    glut_font_idx = 2;
+    glut_font_idx = 5;
     opengl_helper_self_ = this;
     width = height = 0;
     frame_period = -1; // No timer callback.

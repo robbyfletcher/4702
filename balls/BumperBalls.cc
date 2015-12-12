@@ -168,6 +168,8 @@ struct Pairs_Chunk_Info;
 // Class Tile: Physical rectangular object.
 class Tile;
 
+int player1Score = 0, player2Score = 0;
+
 // Class Pass: Information needed for a CUDA launch of a pair pass kernel.
 //
 class Pass {
@@ -768,7 +770,7 @@ World::init()
   for(int i=0; i<256; i++) keyStates[i] = false;
   //glutKeyboardFunc(keyPressed);
   glutKeyboardUpFunc(keyUp);
-  //glutSpecialFunc(keySpecial);
+  glutSpecialFunc(keySpecial);
   //glutSpecialUpFunc(keySpecialUp);
 
   // Platform and Ball Textures
@@ -2209,22 +2211,24 @@ World::time_step_cpu()
   /// Remove balls that have fallen away from the platform.
   //
   if(player1->position.y < deep){
-	player1->position = pCoor(platform_xmax*.75,platformHeight+player1->radius,platform_zmax*.75);
-	player1->velocity = pVect(0,0,0);
-	player1->omega = pVect(0,0,0);
 	keyStates['w'] = false;
 	keyStates['a'] = false;
 	keyStates['s'] = false;
 	keyStates['d'] = false;
+	player1->position = pCoor(platform_xmax*.75,platformHeight+player1->radius,platform_zmax*.75);
+	player1->velocity = pVect(0,0,0);
+	player1->omega = pVect(0,0,0);	
+	player2Score = player2Score + 1;
   }
   if(player2->position.y < deep){
-	player2->position = pCoor(platform_xmin*.75,platformHeight+player2->radius,platform_zmin*.75);
-	player2->velocity = pVect(0,0,0);
-	player2->omega = pVect(0,0,0);
 	keyStates['i'] = false;
  	keyStates['j'] = false;
   	keyStates['k'] = false;
-  	keyStates['l'] = false;
+  	keyStates['l'] = false;	
+	player2->position = pCoor(platform_xmin*.75,platformHeight+player2->radius,platform_zmin*.75);
+	player2->velocity = pVect(0,0,0);
+	player2->omega = pVect(0,0,0);
+	player1Score = player1Score + 1;
   }
   /*for ( Ball *ball; balls_iterate(ball); )
     if ( ball->position.y < deep ) { physs.iterate_yank(); delete ball; }
@@ -3838,7 +3842,18 @@ World::render()
   glEnable(GL_NORMALIZE);
 
   ogl_helper.fbprintf("%s\n",frame_timer.frame_rate_text_get());
-
+  ogl_helper.fbprintf("Player 1 Score: %i \n",player1Score);
+  ogl_helper.fbprintf("Player 2 Score: %i \n", player2Score);
+  if (player1Score >= 5){
+	ogl_helper.fbprintf("GAME OVER: PLAYER 1 WINS!\n");
+	ogl_helper.fbprintf("Press 'r' to reset.");
+	opt_pause = true;
+  }
+  else if (player2Score >= 5){
+	ogl_helper.fbprintf("GAME OVER: PLAYER 2 WINS!\n");
+	ogl_helper.fbprintf("Press 'r' to reset.");
+	opt_pause = true;
+  }
   /*if ( 0 )
   ogl_helper.fbprintf
     ("Eye location: [%5.1f, %5.aaaa1f, %5.1f]  "
@@ -4125,6 +4140,7 @@ World::cb_keyboard()
   pVect user_rot_axis(0,0,0);
   const bool shift = ogl_helper.keyboard_shift;
   const float move_amt = shift ? 2.0 : 0.4;*/
+  if(ogl_helper.keyboard_key < 256)
   keyStates[ogl_helper.keyboard_key] = true;
   /*switch ( ogl_helper.keyboard_key ) {
   case FB_KEY_LEFT: player1->push(pVect(-1,0,0)); break;//adjustment.x = -move_amt; break;
@@ -4235,6 +4251,8 @@ World::cb_keyboard()
     }*/
 }
 
+void keySpecial(int Key, int x, int y){}
+
 void
 keyUp(unsigned char Key, int x, int y){
   keyStates[Key] = false;
@@ -4251,6 +4269,17 @@ World::keyOperations(){
   if(keyStates['j']) player1->push(pVect(-1,0,0));
   if(keyStates['k']) player1->push(pVect(0,0,1));
   if(keyStates['l']) player1->push(pVect(1,0,0)); 
+  if(keyStates['r']){ 
+	opt_pause = false;
+	player1Score = 0;
+	player2Score = 0;
+	player1->position = pCoor(platform_xmax*.75,platformHeight+player1->radius,platform_zmax*.75);
+	player1->velocity = pVect(0,0,0);
+	player1->omega = pVect(0,0,0);
+	player2->position = pCoor(platform_xmin*.75,platformHeight+player2->radius,platform_zmin*.75);
+	player2->velocity = pVect(0,0,0);
+	player2->omega = pVect(0,0,0);
+  }
 }
 
 int
