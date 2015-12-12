@@ -190,6 +190,7 @@ public:
 void keyPressed(unsigned char Key, int x, int y);
 void keyUp(unsigned char Key, int x, int y);
 bool keyStates[1000];
+bool ballColor = true;
 
 // Cast a Phys to a more specialized compatible class, or NULL.
 //
@@ -753,12 +754,12 @@ World::init()
   //
   vs_fixed = new pShader();
 
-  eye_location = pCoor(0,100,100);  //pCoor(17.9,-2,117.2);
-  eye_direction = pCoor(0,0,0)+pVect(0,-100,-100);    //pVect(-0.15,-0.06,-0.96);
+  eye_location = pCoor(0,50,60);  //pCoor(17.9,-2,117.2);
+  eye_direction = pCoor(0,0,0)+pVect(0,-50,-50);    //pVect(-0.15,-0.06,-0.96);
 
   platformHeight = -40;
-  platform_xmin = -40; platform_xmax = 40;
-  platform_zmin = -40; platform_zmax = 40;
+  platform_xmin = -20; platform_xmax = 20;
+  platform_zmin = -20; platform_zmax = 20;
 
   for(int i=0; i<1000; i++) keyStates[i] = false;
   //glutKeyboardFunc(keyPressed);
@@ -1783,13 +1784,17 @@ Ball::Ball(World* wp, float r):Phys(PT_Ball),w(*wp)
   density = w.opt_ball_density;
   set_radius( r == 0 ? w.opt_ball_radius : r );
 
-  color_event = pColor(0.5,0.5,0.5);
-  color_natural = pColor(0.5,0.5,0.5);
+  color_event = pColor(.5,.5,.5);
+  if (ballColor)
+    color_natural = pColor(0,.8,0);
+  else 
+    color_natural = pColor(0,1,.7);
   position = pCoor(30,22,-15.4);
   velocity = pVect(random()/(0.0+RAND_MAX),0,random()/(0.0+RAND_MAX));
 
   orientation.set(pVect(0,1,0),0);
   omega = pVect(0,0,0);
+  ballColor = !ballColor;
 }
 
 void
