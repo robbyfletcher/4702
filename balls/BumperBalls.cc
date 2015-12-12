@@ -189,7 +189,11 @@ public:
 
 void keyPressed(unsigned char Key, int x, int y);
 void keyUp(unsigned char Key, int x, int y);
-bool keyStates[1000];
+void keySpecial(int Key, int x, int y);
+void keySpecialUp(int Key, int x, int y);
+bool keyStates[256];
+
+//enum keyName{keyW, keyA, keyS, keyD, keyUp, keyLeft, keyDown, keyRight};
 
 // Cast a Phys to a more specialized compatible class, or NULL.
 //
@@ -760,10 +764,11 @@ World::init()
   platform_xmin = -40; platform_xmax = 40;
   platform_zmin = -40; platform_zmax = 40;
 
-  for(int i=0; i<1000; i++) keyStates[i] = false;
+  for(int i=0; i<256; i++) keyStates[i] = false;
   //glutKeyboardFunc(keyPressed);
   glutKeyboardUpFunc(keyUp);
- 
+  //glutSpecialFunc(keySpecial);
+  //glutSpecialUpFunc(keySpecialUp);
 
   // Platform and Ball Textures
   //
@@ -2211,10 +2216,10 @@ World::time_step_cpu()
 	player2->position = pCoor(platform_xmin*.75,platformHeight+player2->radius,platform_zmin*.75);
 	player2->velocity = pVect(0,0,0);
 	player2->omega = pVect(0,0,0);
-	keyStates[FB_KEY_UP] = false;
- 	keyStates[FB_KEY_DOWN] = false;
-  	keyStates[FB_KEY_LEFT] = false;
-  	keyStates[FB_KEY_RIGHT] = false;
+	keyStates['i'] = false;
+ 	keyStates['j'] = false;
+  	keyStates['k'] = false;
+  	keyStates['l'] = false;
   }
   /*for ( Ball *ball; balls_iterate(ball); )
     if ( ball->position.y < deep ) { physs.iterate_yank(); delete ball; }
@@ -4116,14 +4121,6 @@ World::cb_keyboard()
   const bool shift = ogl_helper.keyboard_shift;
   const float move_amt = shift ? 2.0 : 0.4;*/
   keyStates[ogl_helper.keyboard_key] = true;
-  /*if(ogl_helper.keyboard_key == FB_KEY_UP) player1->push(pVect(0,0,-1));
-  if(ogl_helper.keyboard_key == FB_KEY_DOWN) player1->push(pVect(0,0,1));
-  if(ogl_helper.keyboard_key == FB_KEY_LEFT) player1->push(pVect(-1,0,0)); 
-  if(ogl_helper.keyboard_key == FB_KEY_RIGHT) player1->push(pVect(1,0,0));
-  if(ogl_helper.keyboard_key == 'w') player2->push(pVect(0,0,-1));
-  if(ogl_helper.keyboard_key == 's') player2->push(pVect(0,0,1));
-  if(ogl_helper.keyboard_key == 'a') player2->push(pVect(-1,0,0));
-  if(ogl_helper.keyboard_key == 'd') player2->push(pVect(1,0,0));
   /*switch ( ogl_helper.keyboard_key ) {
   case FB_KEY_LEFT: player1->push(pVect(-1,0,0)); break;//adjustment.x = -move_amt; break;
   case FB_KEY_RIGHT: player1->push(pVect(1,0,0)); break;//adjustment.x = move_amt; break;
@@ -4233,27 +4230,22 @@ World::cb_keyboard()
     }*/
 }
 
-/*void 
-keyPressed(unsigned char Key, int x, int y){
-  keyStates[Key] = true;
-  printf("Key pressed: %c \n",Key);
-}*/
-
 void
 keyUp(unsigned char Key, int x, int y){
   keyStates[Key] = false;
+
 }
 
 void
 World::keyOperations(){
-  if(keyStates[FB_KEY_UP]) player1->push(pVect(0,0,-1));
-  if(keyStates[FB_KEY_DOWN]) player1->push(pVect(0,0,1));
-  if(keyStates[FB_KEY_LEFT]) player1->push(pVect(-1,0,0));
-  if(keyStates[FB_KEY_RIGHT]) player1->push(pVect(1,0,0));
   if(keyStates['w']) player2->push(pVect(0,0,-1)); 
-  if(keyStates['s']) player2->push(pVect(0,0,1)); 
   if(keyStates['a']) player2->push(pVect(-1,0,0)); 
-  if(keyStates['d']) player2->push(pVect(1,0,0)); 
+  if(keyStates['s']) player2->push(pVect(0,0,1)); 
+  if(keyStates['d']) player2->push(pVect(1,0,0));
+  if(keyStates['i']) player1->push(pVect(0,0,-1));
+  if(keyStates['j']) player1->push(pVect(-1,0,0));
+  if(keyStates['k']) player1->push(pVect(0,0,1));
+  if(keyStates['l']) player1->push(pVect(1,0,0)); 
 }
 
 int
